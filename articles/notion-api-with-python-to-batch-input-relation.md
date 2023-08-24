@@ -42,7 +42,7 @@ notion.so で、リレーションを追加したいデータベースを開き�
 URL の`database/`の後ろの文字列が`database_id`です。
 
 ここではリレーション元が`MAIN_DATABASE_ID`、リレーション先が`SUB_DATABASE_ID`とします。
-これらをコピーして、colab の`MAIN_DATABASE_ID`と`SUB_DATABASE_ID`に貼り付けてください。
+これらをコピーして、[colab](https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb#scrollTo=9eusB9FIwzfy&line=1&uniqifier=1) の`MAIN_DATABASE_ID`と`SUB_DATABASE_ID`に貼り付けてください。
 
 ## 4. プロパティの編集
 
@@ -52,7 +52,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
   - リレーションを追加したいプロパティ名を入力してください。
 
 :::message
-`①基となるメインデータベースの全アイテムのIDを一括取得して、別のデータベースを作成しリレーションを追加`のみを試したい場合は、ここまでで OK です。
+[`①基となるメインデータベースの全アイテムのIDを一括取得して、別のデータベースを作成しリレーションを追加`](https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb#scrollTo=TDXK9WP_wH1F)のみを試したい場合は、ここまでで OK です。
 :::
 
 - `SUB_DATABASE_property_name_searching_by`
@@ -76,7 +76,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
 
 ## 5. 実行
 
-こちらで準備は完了ですので、実行してみましょう。
+こちらで準備は完了ですので、[実行してみましょう](https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb#scrollTo=-2dxxLg3xXVR)。
 
 ② の検索する方をやってみます。先ほどのデータベースに以下のように、同じ名前のアイテムを追加してみます。
 ![](https://storage.googleapis.com/zenn-user-upload/986b63d60ed7-20230825.png)
