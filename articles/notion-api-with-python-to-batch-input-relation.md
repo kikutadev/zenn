@@ -78,16 +78,20 @@ URL の`database/`の後ろの文字列が`database_id`です。
 
 こちらで準備は完了ですので、[実行してみましょう](https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb#scrollTo=-2dxxLg3xXVR)。
 
-② の検索する方をやってみます。先ほどのデータベースに以下のように、同じ名前のアイテムを追加してみます。
+② の検索する方をやってみます。先ほどのデータベースのままだと1件しかなくてつまらないので、以下のように、それぞれのデータベースのNameプロパティに、同じ文字列のタイトルのアイテムを追加しておきます。
 ![](https://storage.googleapis.com/zenn-user-upload/986b63d60ed7-20230825.png)
 ![](https://storage.googleapis.com/zenn-user-upload/b98817943558-20230825.png)
 
-### こちらで実行すると、、、
+これらを一括でリレーションさせてみましょう。
+
+### 実行すると、、、
 
 無事追加されました！
 ![](https://storage.googleapis.com/zenn-user-upload/9c1235e0acdf-20230825.png)
 
-一度リレーションが追加されたら、後は Excel でいう`VLOOKUP`のように、ロールアップの機能により、リレーション先のプロパティを取得できます。
+同じテキストなので、無意味に思われるかもしれませんが、ここでリレーションのパワーを発揮します。
+
+一度リレーションが追加されたら、Excel でいう`VLOOKUP`のように、ロールアップの機能により、**リレーション先のプロパティを取得できる**のです。
 以下は、`MAIN_DATABASE`にステータスというプロパティを追加し、`SUB_DATABASE`にロールアップで`MAIN_DATABASE`のステータスを取得した例です。
 ![](https://storage.googleapis.com/zenn-user-upload/e9e414947b05-20230825.png)
 ![](https://storage.googleapis.com/zenn-user-upload/7300fc97b918-20230825.png)
