@@ -6,15 +6,15 @@ topics: ["notion", "notionapi", "googlecolab", "python", "api"]
 published: true
 ---
 
-### gist のリンク
+# gist のリンク
 
 https://gist.github.com/kikutadev/25b4f9fc725b14d2bcb4103182f78539
 
-### Colab のリンク
+# Colab のリンク
 
 https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb
 
-### 使い方
+# 使い方
 
 以下の 5 ステップで進めていきます。
 
@@ -24,18 +24,18 @@ https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f7853
 4. プロパティの編集
 5. 実行
 
-#### 1. NOTION_TOKEN の取得
+## 1. NOTION_TOKEN の取得
 
 https://notion.so/my-integrations から取得してください。
 
 `secret`から始まる文字列です。これをコピーして、colab の`NOTION_TOKEN`に貼り付けてください。
 
-#### 2. Notion でインテグレーションを追加する
+## 2. Notion でインテグレーションを追加する
 
 作成したインテグレーションを以下のように追加します。
 ![](https://storage.googleapis.com/zenn-user-upload/2ef71db4f29f-20230825.png)
 
-#### 3. database_id の取得
+## 3. database_id の取得
 
 notion.so で、リレーションを追加したいデータベースを開きます。
 
@@ -44,7 +44,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
 ここではリレーション元が`MAIN_DATABASE_ID`、リレーション先が`SUB_DATABASE_ID`とします。
 これらをコピーして、colab の`MAIN_DATABASE_ID`と`SUB_DATABASE_ID`に貼り付けてください。
 
-#### 4. プロパティの編集
+## 4. プロパティの編集
 
 以下の 3 つのプロパティを編集していきます。
 
@@ -74,7 +74,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
 
 ![](https://storage.googleapis.com/zenn-user-upload/0ec1c22aabe3-20230825.png)
 
-#### 5. 実行
+## 5. 実行
 
 こちらで準備は完了ですので、実行してみましょう。
 
@@ -82,7 +82,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
 ![](https://storage.googleapis.com/zenn-user-upload/986b63d60ed7-20230825.png)
 ![](https://storage.googleapis.com/zenn-user-upload/b98817943558-20230825.png)
 
-##### こちらで実行すると、、、
+### こちらで実行すると、、、
 
 無事追加されました！
 ![](https://storage.googleapis.com/zenn-user-upload/9c1235e0acdf-20230825.png)
@@ -92,7 +92,7 @@ URL の`database/`の後ろの文字列が`database_id`です。
 ![](https://storage.googleapis.com/zenn-user-upload/e9e414947b05-20230825.png)
 ![](https://storage.googleapis.com/zenn-user-upload/7300fc97b918-20230825.png)
 
-### まとめ
+# まとめ
 
 ここでは以下の 5 手順を紹介しました。
 
@@ -105,10 +105,10 @@ URL の`database/`の後ろの文字列が`database_id`です。
 ここでは Name というプロパティで取得しましたが、少し手直しすれば、アイデア次第で色々発展させられるのではないかと思います。
 ぜひ活用してみてください。
 
-### gist のリンク
+# gist のリンク
 
 https://gist.github.com/kikutadev/25b4f9fc725b14d2bcb4103182f78539
 
-### Colab のリンク
+# Colab のリンク
 
 https://colab.research.google.com/gist/kikutadev/25b4f9fc725b14d2bcb4103182f78539/notion-api-batch-relation.ipynb
