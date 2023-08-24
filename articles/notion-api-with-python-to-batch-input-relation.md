@@ -1,5 +1,5 @@
 ---
-title: "Notion APIを使ってリレーションを一括追加するGoogle Colabファイルを公開しました"
+title: "NotionのテーブルにNotion APIを使ってリレーションを一括追加するGoogle Colabファイルを公開しました"
 emoji: "🔗"
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ["notion", "notionapi", "googlecolab", "python", "api"]
