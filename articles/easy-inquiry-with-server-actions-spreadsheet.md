@@ -1,11 +1,3 @@
----
-title: "NextjsのServer ActionsとGoogle Spreadsheetでお手軽お問い合わせフォーム"
-emoji: "💬"
-type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["nextjs", "ServerActions", "GoogleSpreadsheet", "お問い合わせフォーム"]
-published: false
----
-
 # 結論：こんな感じでお問い合わせを送付できるように
 
 ![](https://storage.googleapis.com/zenn-user-upload/4562c685543f-20230821.gif)
@@ -213,7 +205,7 @@ export default function InquiryPage() {
 
 以上で、Google Spreadsheet に POST できるようになります。触ったファイルは、config 系を除けば page.tsx と sendInquiry.ts の 2 つだけです。簡単！
 
-## 追加メモ：action={sendInquiry}とは？FormData とは？get メソッドとは？
+## 追加メモ：`action`属性とは？`FormData`とは？`get`メソッドとは？
 
 私がつまづいた部分をもう少しメモしておきます。
 
