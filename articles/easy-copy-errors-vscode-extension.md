@@ -1,14 +1,23 @@
 ---
-title: ""
+title: "生成AIにエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」を作りました"
 emoji: "👋"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: []
+topics: ["vscode","vscode拡張機能","生成AI"]
 published: false
 ---
 
-# ChatGPTに最適なエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」実装編 🚀
+# 生成AIに最適なエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」を作りました 🚀
 
-こんにちは！今回は、開発作業中に遭遇するエラーを生成AIに効率的に伝えるためのVSCode拡張機能「Easy Copy Errors」について紹介します。コーディング中にエラーが出て、「このエラーどう解決すればいいんだろう...ChatGPTに聞いてみよう」と思ったとき、エラー内容をいちいち手動でコピペするのって面倒ですよね😅 そんな悩みを解決する拡張機能を作ってみました！
+今回は、開発作業中に遭遇するエラーを生成AIに効率的に伝えるためのVSCode拡張機能「Easy Copy Errors」について紹介します。
+コーディング中にエラーが出て、「このエラーどう解決すればいいんだろう...ChatGPTに聞いてみよう」と思ったとき、エラー内容をいちいち手動でコピペするのって面倒ですよね😅 そんな悩みを解決する拡張機能を作ってみました！
+
+エラーのコピペは面倒なので…
+
+![エラーのコピペは面倒](/images/easy-copy-errors-vscode-extension/image.png)
+
+↓こんな感じで解決！（ファイルを開いた状態でcmd+option+Eするだけ）
+
+![解決](/images/easy-copy-errors-vscode-extension/how-to-use.gif)
 
 ## はじめに：なぜこの拡張機能が必要なのか
 
@@ -20,7 +29,7 @@ published: false
 Type 'Err' is not assignable to type 'Result'.
 ```
 
-これだけ見てもどのファイルのどの行で起きたのか、その行のコードがどうなっているのかが分かりません。これをAIに効率よく伝えたい。そんな要望から生まれたのが「Easy Copy Errors」です。
+これだけ見てもどのファイルのどの行で起きたのか、その行のコードがどうなっているのかが分かりません。これをAIに効率よく伝えたい。そんな気持ちから生まれたのが「Easy Copy Errors」です。
 
 ## 実装：TypeScriptでVSCode拡張機能を作る
 
@@ -235,7 +244,7 @@ Error: Unable to install extension 'undefined_publisher.easy-copy-errors' as it 
 }
 ```
 
-また、`publisher`フィールドが未定義の場合も同様のエラーが表示されることがあります。個人利用なら適当な値でOKです。
+また、`publisher`フィールドが未定義の場合も同様のエラーが表示されることがあります。
 
 ```json
 "publisher": "your-name",
@@ -248,40 +257,27 @@ ERROR  @types/vscode ^1.97.0 greater than engines.vscode ^1.9.0. Consider upgrad
 ```
 
 このエラーは、型定義のバージョンとエンジンのバージョンが一致していないときに発生します。解決策は2つ：
+どのくらいのバージョンまで互換性を保つか、というのがポイントかもです。
 
 1. `package.json`の`engines.vscode`を型定義に合わせる
 2. `@types/vscode`のバージョンを下げる
 
 ```bash
-# 選択肢2の場合（非推奨）
 npm install --save-dev @types/vscode@^1.96.0
 ```
 
-ただし、①の方法（エンジンバージョンを型定義に合わせる）が推奨です。
-
 ## 生成AIとの連携：どう使うのか
 
-この拡張機能を使えば、エラーが発生した時に`Ctrl+Shift+E`を押すだけで、以下のような情報がクリップボードにコピーされます。
+ファイルを開いた状態で、エラーが発生した時に`Ctrl+Shift+E`を押すだけ。
 
-```
-file: src/components/Button.tsx
-Line 42:      return {label}
-Property 'handlClick' does not exist. Did you mean 'handleClick'? ts(2551)
-```
+![error画面](/images/easy-copy-errors-vscode-extension/error.png)
 
-これをそのままChatGPTなどの生成AIに貼り付けるだけで、AIはエラーの発生場所やコード内容を正確に把握できます。
 
-例えばこんな感じで聞くことができます👇
+これをそのままChatGPTなどの生成AIに貼り付けると…
 
-```
-以下のTypeScriptのエラーを解決する方法を教えてください。
+![chatgpt画面](/images/easy-copy-errors-vscode-extension/chatgpt.png)
 
-file: src/components/Button.tsx
-Line 42:      return {label}
-Property 'handlClick' does not exist. Did you mean 'handleClick'? ts(2551)
-```
-
-AIは「handlClick」が「handleClick」の打ち間違いであることをすぐに理解し、適切な解決策を提案してくれるでしょう！
+簡単でいいですね！
 
 ## まとめ：生産性向上のための小さな一歩
 
@@ -301,4 +297,3 @@ AIは「handlClick」が「handleClick」の打ち間違いであることをす
 ---
 
 ちなみに、この拡張機能はMITライセンスで公開していますので、自由に利用・改変していただけます。GitHubリポジトリへのスター⭐もお待ちしています！
-
