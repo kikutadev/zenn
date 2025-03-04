@@ -19,6 +19,12 @@ published: false
 
 ![解決](/images/easy-copy-errors-vscode-extension/how-to-use.gif)
 
+↓VSCode Extensionとして公開しています
+https://marketplace.visualstudio.com/items?itemName=kikuta.easy-copy-errors
+
+↓Githubはこちら
+https://github.com/kikutadev/easy-copy-errors
+
 ## はじめに：なぜこの拡張機能が必要なのか
 
 プログラミングをしていると、必ず遭遇するのがエラーメッセージ。特にTypeScriptなどの型エラーは情報量が多く、ChatGPTなどの生成AIに質問する際に「ファイルのどこで」「どんなエラーが」「どんなコードで」発生しているかを正確に伝えることが重要です。
@@ -296,4 +302,11 @@ npm install --save-dev @types/vscode@^1.96.0
 
 ---
 
-ちなみに、この拡張機能はMITライセンスで公開していますので、自由に利用・改変していただけます。GitHubリポジトリへのスター⭐もお待ちしています！
+ちなみに、この拡張機能はMITライセンスで公開していますので、自由に利用・改変していただけます。
+GitHubリポジトリへのスター⭐もお待ちしています！
+
+↓VSCode Extensionとして公開しています
+https://marketplace.visualstudio.com/items?itemName=kikuta.easy-copy-errors
+
+↓Githubはこちら
+https://github.com/kikutadev/easy-copy-errors
