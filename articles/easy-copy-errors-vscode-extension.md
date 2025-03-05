@@ -6,8 +6,10 @@ topics: ["vscode","vscode拡張機能","生成AI"]
 published: true
 ---
 
-:::alert
+:::message
+
 この記事はほとんど全て生成AIによって書かれています
+
 :::
 
 # 生成AIに最適なエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」を作りました 🚀
