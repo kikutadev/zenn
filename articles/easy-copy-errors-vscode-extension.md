@@ -1,12 +1,17 @@
 ---
 title: "生成AIにエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」を作りました"
 emoji: "👋"
-type: "tech" # tech: 技術記事 / idea: アイデア
+type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ["vscode","vscode拡張機能","生成AI"]
-published: false
+published: true
 ---
 
+:::alert
+この記事はほとんど全て生成AIによって書かれています
+:::
+
 # 生成AIに最適なエラー情報をワンショットでコピー！VSCode拡張機能「Easy Copy Errors」を作りました 🚀
+
 
 今回は、開発作業中に遭遇するエラーを生成AIに効率的に伝えるためのVSCode拡張機能「Easy Copy Errors」について紹介します。
 コーディング中にエラーが出て、「このエラーどう解決すればいいんだろう...ChatGPTに聞いてみよう」と思ったとき、エラー内容をいちいち手動でコピペするのって面倒ですよね😅 そんな悩みを解決する拡張機能を作ってみました！
