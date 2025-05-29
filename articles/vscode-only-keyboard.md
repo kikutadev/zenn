@@ -24,7 +24,6 @@ published: true
 | Search に focus         | command + shift + F      | 検索するやつ     | default |
 | Source Control に focus | command + shift + G      | git 見るやつ     | custom  |
 
-基本のキだと思います。
 ちなみに、ショートカットキーをE、F、G と ABC 順に並べてみました。結構覚えやすいのではないでしょうか？
 source control については、カスタマイズしてます。
 デフォルトだと control+shift+g で、他と統一されてないとわかりづらいので。
