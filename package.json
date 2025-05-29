@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/kikutadev/zenn#readme",
   "dependencies": {
-    "zenn-cli": "^0.1.158"
+    "zenn-cli": "^0.1.161"
   }
 }
