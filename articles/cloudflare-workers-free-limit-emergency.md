@@ -6,7 +6,9 @@ topics: ["cloudflare", "cloudflareworkers", "githubpages", "unity", "browsergame
 published: false
 ---
 
-ブラウザゲーム「[GAPLINE](https://games.kikuta.dev/gapline/)」を公開した翌日、ゲームサイトのCloudflare Workersが無料枠の上限に達し、**Error 1027**が発生した。急いでGAPLINEをGitHub Pagesへ一時的に転送し、翌日にはCloudflareへ戻した。その後、ゲームの静的ファイルをWorkerで処理しないよう配信方法を変更した。
+ブラウザゲーム「[GAPLINE](https://games.kikuta.dev/gapline/)」を公開した翌日、ゲームサイトのCloudflare Workersが無料枠に達し、**Error 1027**が発生した。GAPLINEをGitHub Pagesへ一時退避し、翌日にはCloudflareでの配信を再開した。
+
+このときの経験を振り返りながら、Workersの無料枠に達したときの緊急回避策と、同じ事態を避けるために見直した配信設定をTipsとしてまとめる。
 
 ## Workersの無料枠に達した
 
