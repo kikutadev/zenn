@@ -6,58 +6,127 @@ topics: ["cloudflare", "cloudflareworkers", "d1", "個人開発", "browsergame"]
 published: false
 ---
 
-![DUO瓦割り、Cloudflare Workersのリクエスト急増](/images/duo-cloudflare/duo-cloudflare-15min-thumbnail.webp)
+![DUO瓦割りとCloudflare Workersのリクエスト急増](/images/duo-cloudflare/duo-cloudflare-15min-thumbnail.webp)
 
-Cloudflare Workersの無料枠は、1日10万リクエスト。2026年10月25日の夜、ブラウザゲーム「DUO瓦割り」を公開していたゲームサイトでは、**15分間に132,360回**のWorkers呼び出しが記録されていた。
+ブラウザゲーム「DUO瓦割り」は、10月25〜26日の2日間で84万回遊ばれた。アクセスが集中した10月25日23時頃には、ゲームサイトのCloudflare Workersで**15分間に132,360回**の呼び出しが発生していた。当時のWorkers Freeの上限は1日10万回で、その回数を15分間で上回った。
 
-公開後のアクセス増加を機に、D1で大量の行を読むSQLと、静的ファイルもWorkerを通す配信構成が問題になった。対処前の使用量と変更内容をまとめる。
+原因を調べると、画像やJavaScriptを返すだけの通信までWorkerが処理していた。さらに、スコアを保存するD1では、画面に1つの数字を表示するために大量のプレイ履歴を読み取るSQLも問題になった。
 
-## 84万回のプレイと、世界累計
+この記事では、**Workersの呼び出し回数を減らす配信設定**と、**D1の読み取り行数を減らすSQLの変更**を、実際に使ったコードをもとに紹介する。
 
-DUO瓦割りは、タイミングを合わせて折りたたみスマホを瓦のように割り、壊した台数を競うブラウザゲームだ。オンラインの世界累計とランキングにはCloudflare WorkersとD1を使っている。
+## DUO瓦割りの配信構成
+
+DUO瓦割りは、タイミングよくタップして折りたたみスマホを瓦割りのように壊し、破壊した台数を競うブラウザゲーム。プレイ終了時のスコアをD1に保存し、世界累計やランキングをサイトに表示している。
 
 https://games.kikuta.dev/duo-breaker/
 
-10月25〜26日の完了プレイは **84万回**。当時の累計PVは503,830だった。ただしPVには、計測できなかった初期期間を推計して補った331,900が含まれる。完了プレイ数は「何回遊び終えたか」であり、訪問者数ではない。
+ゲームサイトの構成は、フロントエンドの静的ファイルをCloudflare Workers Static Assetsで配信し、スコア保存やランキングなどのAPIにWorkersとD1を使うものだった。ただし当時は、その配信経路が適切に分かれていなかった。
 
-![DUO瓦割りのタイトル画面。11月12日時点の世界累計30,163,137台が表示されている](/images/duo-cloudflare/duo-breaker-world-total-2026-11-12.png)
+## WorkersとD1で、別々の負荷が増えていた
 
-## Cloudflareの無料枠と実際の使用量
+10月25〜27日の3日間で、ゲームサイト全体のWorkers呼び出しは367万回。D1では30億行の読み取りと647万行の書き込みが記録された。いずれもDUO単独の数値ではない。
 
-CloudflareのWorkersはサーバー側の処理を動かす仕組みで、D1はその処理から利用できるデータベースだ。無料プランにはそれぞれ使用量の上限がある。2026年10月時点では、Workersは1日10万リクエスト、D1は1日500万行の読み取りと10万行の書き込みが無料枠だった（Cloudflare公式：[Workersの制限](https://developers.cloudflare.com/workers/platform/limits/)・[D1の料金と無料枠](https://developers.cloudflare.com/d1/platform/pricing/)）。
+![10月25〜27日のWorkers呼び出しの推移](/images/duo-cloudflare/duo-cloudflare-workers-oct25-27-2026.png)
 
-ここで紛らわしいのは、「リクエスト数」と「D1の読み取り行数」が別物だという点だ。たとえばゲーム画面から世界累計を1回取得するだけでも、SQLが大量のプレイ履歴を読むなら、D1の読み取り行数は大きく増える。
+![10月25〜27日のD1読み取り・書き込み行数の推移](/images/duo-cloudflare/duo-cloudflare-d1-oct25-27-2026.png)
 
-10月25〜27日の3日間（日本時間）に、ゲームサイト全体で記録されたWorkers呼び出しは **367万回**。これはDUO単独の数値でも、プレイヤーの人数でもない。
+急増時にはWorkers Paidに切り替え、日割りで$1.95（税込）が請求された。
 
-![Cloudflare Workersの管理画面。10月25〜27日のWorkers呼び出しの推移](/images/duo-cloudflare/duo-cloudflare-workers-oct25-27-2026.png)
+Cloudflareでは、次の2つを分けて考える必要がある。
 
-さらに、同じ期間付近のD1使用量を調べると、10月25〜27日のUTC日付集計で **30億行を読み取り、647万行を書き込んでいた**。こちらもDUO専用ではないデータベースの合計だ。
+- **Workersの呼び出し回数**：Workerがリクエストを処理した回数。2026年10月時点のFree枠は1日10万回（[公式の制限](https://developers.cloudflare.com/workers/platform/limits/)）。
+- **D1の読み取り・書き込み行数**：SQLが読み書きした行の数。Free枠は1日500万行の読み取り、10万行の書き込み（[公式の料金体系](https://developers.cloudflare.com/d1/platform/pricing/)）。
 
-![Cloudflare D1の管理画面。10月25〜27日の読み取り行数と書き込み行数の推移](/images/duo-cloudflare/duo-cloudflare-d1-oct25-27-2026.png)
+例えば、1回のAPIリクエストでSQLが86万行を読めば、Workersの呼び出しは1回でもD1側では86万行の読み取りになる。したがって、配信経路とSQLはそれぞれ対処する必要があった。
 
-## 世界累計を表示するだけで、86万行を読んでいた
+## 対策1：画像やJavaScriptをWorkerに通さない
 
-原因の一つは世界累計のSQLだった。
+最初の問題は、`wrangler.jsonc` のStatic Assets設定だった。元の設定は次のとおり。
 
-画面に表示するのは「これまでに壊された台数」という1つの数字だが、当初の処理は、プレイが終わるたびに増えていく履歴を読み直して合計を求めていた。履歴が増えるほど、同じ画面を開くのにも多くの行を読む構造だった。
+```jsonc
+{
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}
+```
 
-実測では、このクエリは **1回の実行で86万行** を読み取っていた。
+`run_worker_first: true` では、画像・JavaScript・CSSなどの静的ファイルへのアクセスも、まずWorkerを経由する。ゲームは起動時に複数の素材を読み込むため、ページを1回開くだけでもWorkersの呼び出しが増えていた。
 
-対策として、プレイ終了時に集計値を更新し、表示時はその集計済みの値を取得するよう変更した。その結果、同じクエリの読み取り行数は **162行／回** になった。対象クエリでは約5,300分の1に減った。
+そこで、**Workerで処理する必要のあるURLだけを指定する方式**に変更した。設定の主要部分は以下のとおり。
 
-ランキングも、毎回すべてのプレイ履歴から順位を計算する方式を改めた。登録プレイヤーの自己ベストを別に保持し、表示する順位やランキングは必要なデータを参照する。共有の集計結果にはキャッシュも使い、プレイ直後の本人の記録は別に取得できるようにした。
+```jsonc
+{
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/",
+      "/*/",
+      "/*.html",
+      "/api/*"
+    ]
+  }
+}
+```
 
-D1の料金や無料枠では、SQLが返した件数ではなく、実際に読み書きした行数が重要になる。合計1行を返すSQLでも、そのために何十万行も走査すれば使用量は増える。
+HTMLのルーティングやAPIはWorkerに通し、画像・JavaScript・CSSはStatic Assetsから直接返す。`/duo-breaker/*` のような広い指定を残すとゲーム素材まで再びWorkerを通してしまうため、**指定するパスの範囲**が重要だった。
 
-## 静的ファイルもWorkerを通していた
+世界累計やランキングのように複数人が同じ結果を見るGET APIにはキャッシュも使った。画面を開くたびに同じSQLを実行しないための対策だ。
 
-Workersの呼び出し数については、配信経路にも問題があった。
+## 対策2：累計を表示するたびに履歴を読み直さない
 
-ゲームの画像やJavaScriptなど、保存されたファイルをそのまま返せばよい通信までWorkerの処理を通していた。そこで、静的ファイルはWorkers Static Assetsから直接配信し、プレイ記録やランキングなどのAPIだけをWorkerで扱うよう変更した。
+DUO瓦割りの世界累計は、最初から`duo_breaker_totals`という集計テーブルで管理していた。プレイ終了時に合計台数と完了回数を加算する仕組みだ。
 
-Workers Paidへの切り替え時には、日割りで **$1.95（税込）** が請求された。
+問題は、その後に追加した**一定以上のスコアを通常の世界累計から除外する処理**だった。1,000台以上の記録を別区分にするため、画面の累計を取得するたびに、プレイ履歴から除外対象のスコアを合計して差し引いていた。
+
+```sql
+SELECT t.broken_phones - (
+  SELECT COALESCE(SUM(r.destroyed), 0)
+  FROM duo_breaker_runs r
+  WHERE r.destroyed >= 1000
+) AS brokenPhones
+FROM duo_breaker_totals t
+WHERE t.id = 1;
+```
+
+返す結果は世界累計の1行だけでも、その計算のために`duo_breaker_runs`を調べる。プレイ履歴が増えるほど、読み取り負荷が大きくなる可能性があった。
+
+そこで、除外対象の合計も、プレイ終了時に更新するよう変更した。`duo_breaker_totals`に`bot_phones`を追加し、スコア確定時のトリガーで加算する。既存の除外対象分は移行時に一度だけ集計している。
+
+```sql
+CREATE TRIGGER duo_breaker_count_once
+AFTER UPDATE OF destroyed ON duo_breaker_runs
+WHEN OLD.destroyed IS NULL AND NEW.destroyed IS NOT NULL
+BEGIN
+  UPDATE duo_breaker_totals
+  SET broken_phones = broken_phones + NEW.destroyed,
+      completed_plays = completed_plays + 1,
+      bot_phones = bot_phones +
+        CASE WHEN NEW.destroyed >= 1000 THEN NEW.destroyed ELSE 0 END
+  WHERE id = 1;
+END;
+```
+
+この条件なら、完了前から完了済みへの更新時だけ加算され、終了リクエストの再送による二重計上も防げる。
+
+累計を取得するSQLは次の形になった。
+
+```sql
+SELECT broken_phones - bot_phones AS brokenPhones,
+       completed_plays AS plays
+FROM duo_breaker_totals
+WHERE id = 1;
+```
+
+こうすると、**表示のたびにプレイ履歴を合計する必要がない**。関連する累計取得処理では、1回あたりのD1読み取りが86万行から162行に減った。
+
+ランキングにも同様の問題があった。全プレイから毎回自己ベストと順位を計算するのではなく、登録プレイヤーの自己ベストを別テーブルに保持し、順位表示ではそこから上位を取り出す方式にした。集計結果をあらかじめ持つことで、履歴の増加に引きずられにくくした。
 
 ## まとめ
 
-今回の対策は、静的ファイルをWorkerの処理から分離し、D1では履歴を毎回集計するSQLを集計済みデータの参照に変更することだった。Workersの呼び出し回数とD1の読み取り行数は別々の指標なので、それぞれの処理と使用量を見直す必要がある。
+アクセス増加で最初に見直すべきだったのは、**1回の画面表示で何度Workerが呼ばれるか**と、**1回のAPI処理でD1が何行読むか**の2点だった。
+
+画像やJavaScriptはWorkerに通さず、共有できるAPIの結果はキャッシュする。合計値やランキングを表示するために履歴を毎回計算しているなら、更新時に集計値を保持できないか検討する。どちらも、アクセス数やプレイ履歴が増える前に確認しておきたいポイントだ。
